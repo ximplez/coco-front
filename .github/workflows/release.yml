@@ -24,7 +24,7 @@ env:
   BUILD_ENV: prod
 
 jobs:
-  release:
+  git-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,12 +45,12 @@ jobs:
           files: |
             Release.txt
             LICENSE
-  build:
+  docker-release:
     # 运行环境
     runs-on: ubuntu-latest
     # 运行步骤
     steps:
-
+      - uses: actions/checkout@v3
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry
