@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import {useRouterPush} from '@/hooks/common/router';
+import { useRouterPush } from '@/hooks/common/router';
 
-import {SsoAuthor} from '@/enum';
-import {useAuthStore} from '@/store/modules/auth';
+import { SsoAuthor } from '@/enum';
+import { useAuthStore } from '@/store/modules/auth';
 
 defineOptions({
   name: 'SsoLogin'
 });
 
-const {toggleLoginModule} = useRouterPush();
+// const {toggleLoginModule} = useRouterPush();
 
 const ssoAuthor = SsoAuthor;
 const authStore = useAuthStore();
-const {toLogin} = useRouterPush();
+const { toLogin } = useRouterPush();
 
 async function toggleSsoLogin(author: string) {
   const url = await authStore.fetchSsoUrl(author);
-  console.log(url)
   if (url) {
     window.open(url, '_self');
   } else {
