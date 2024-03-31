@@ -40,6 +40,11 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            Release.txt
+            LICENSE
   build:
     # 运行环境
     runs-on: ubuntu-latest
