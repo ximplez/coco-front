@@ -1,7 +1,7 @@
 import { computed, reactive, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useLoading } from '@sa/hooks';
-import {SetupStoreId, SsoAuthor} from '@/enum';
+import { SetupStoreId, SsoAuthor } from '@/enum';
 import { useRouterPush } from '@/hooks/common/router';
 import {
   doLoginSso,
@@ -9,7 +9,8 @@ import {
   fetchGetUserInfo,
   fetchLogin,
   fetchLoginSsoCheck,
-  fetchLoginSsoUrl, fetchSsoUserInfo
+  fetchLoginSsoUrl,
+  fetchSsoUserInfo
 } from '@/service/api';
 import { localStg } from '@/utils/storage';
 import { $t } from '@/locales';
@@ -75,7 +76,9 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         if (routeStore.isInitAuthRoute) {
           window.$notification?.success({
             title: $t('page.login.common.loginSuccess'),
-            content: $t('page.login.common.welcomeBack', { userName: userInfo.userName }),
+            content: $t('page.login.common.welcomeBack', {
+              userName: userInfo.userName
+            }),
             duration: 4500
           });
         }
@@ -111,7 +114,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   async function fetchSsoUrl(author: string) {
     startLoading();
 
-    const {data: url, error} = await fetchLoginSsoUrl(author);
+    const { data: url, error } = await fetchLoginSsoUrl(author);
 
     if (error) {
       resetStore();
@@ -127,7 +130,9 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         if (routeStore.isInitAuthRoute) {
           window.$notification?.success({
             title: $t('page.login.common.loginSuccess'),
-            content: $t('page.login.common.welcomeBack', {userName: userInfo.userName}),
+            content: $t('page.login.common.welcomeBack', {
+              userName: userInfo.userName
+            }),
             duration: 4500
           });
         }
@@ -139,12 +144,24 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
 
   async function loginSso(author: string, code: string, state: string) {
     startLoading();
-    const {error} = await doLoginSso(author, code, state);
+    const { error } = await doLoginSso(author, code, state);
 
     if (!error) {
-      await fetchUser(author);
-      endLoading();
-      return true;
+      const res = await fetchUser(author);
+      if (res) {
+        redirectFromLogin();
+        if (routeStore.isInitAuthRoute) {
+          window.$notification?.success({
+            title: $t('page.login.common.loginSuccess'),
+            content: $t('page.login.common.welcomeBack', {
+              userName: userInfo.userName
+            }),
+            duration: 4500
+          });
+        }
+        endLoading();
+        return true;
+      }
     }
     await resetStore();
     endLoading();
@@ -152,7 +169,7 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function fetchUser(author: string) {
-    const {data: info, error: err} = await fetchSsoUserInfo(author);
+    const { data: info, error: err } = await fetchSsoUserInfo(author);
     if (!err && info !== null) {
       info.roles = ['R_SUPER'];
       localStg.set('token', info.userId);
@@ -174,13 +191,14 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   async function logoutSso() {
     await resetStore();
     await doLogoutSso(localStg.get('author') || '');
+    toLogin();
   }
 
   async function checkLogin() {
     if (!token.value) {
       return false;
     }
-    const {data: check, error} = await fetchLoginSsoCheck(localStg.get('author') || SsoAuthor.Authing);
+    const { data: check, error } = await fetchLoginSsoCheck(localStg.get('author') || SsoAuthor.Authing);
     if (!error) {
       return check;
     }
