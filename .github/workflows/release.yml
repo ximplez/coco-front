@@ -80,12 +80,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-#          file: { context }/docker/Dockerfile
-#          push: ${{ github.event_name != 'pull_request' }}
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
-#          build-args: |
-#            - BUILD_ENV=${{ env.BUILD_ENV }}
+          file: ./docker/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            - BUILD_ENV=${{ env.BUILD_ENV }}
 #
 #  deploy:
 #    needs: build
