@@ -12,7 +12,7 @@ on:
       - 'dev/**'
       - 'release/**'
     tags:
-      - 'v**'
+      - 'vx**'
 
 env:
   #  仓库地址

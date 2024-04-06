@@ -175,7 +175,7 @@ function edit(id: number) {
       <ConfigOperateDrawer
         v-model:visible="drawerVisible"
         :operate-type="operateType"
-        :row-data="{ ...editingData, namespace: searchParams?.namespace }"
+        :row-data="{ ...editingData, namespace: searchParams?.namespace || '' }"
         @submitted="getData"
       />
     </NCard>
