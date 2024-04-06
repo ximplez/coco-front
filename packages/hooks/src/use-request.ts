@@ -1,6 +1,5 @@
-import { ref } from 'vue';
 import type { Ref } from 'vue';
-import { createFlatRequest } from '@sa/axios';
+import { ref } from 'vue';
 import type {
   AxiosError,
   CreateAxiosDefaults,
@@ -9,6 +8,7 @@ import type {
   RequestOption,
   ResponseType
 } from '@sa/axios';
+import { createFlatRequest } from '@sa/axios';
 import useLoading from './use-loading';
 
 export type HookRequestInstanceResponseSuccessData<T = any> = {
@@ -16,19 +16,20 @@ export type HookRequestInstanceResponseSuccessData<T = any> = {
   error: Ref<null>;
 };
 
-export type HookRequestInstanceResponseFailData<T = any> = {
+export type HookRequestInstanceResponseFailData<ResponseData = any> = {
   data: Ref<null>;
-  error: Ref<AxiosError<T>>;
+  error: Ref<AxiosError<ResponseData>>;
 };
 
-export type HookRequestInstanceResponseData<T = any> = {
+export type HookRequestInstanceResponseData<T = any, ResponseData = any> = {
   loading: Ref<boolean>;
-} & (HookRequestInstanceResponseSuccessData<T> | HookRequestInstanceResponseFailData<T>);
+} & (HookRequestInstanceResponseSuccessData<T> | HookRequestInstanceResponseFailData<ResponseData>);
 
-export interface HookRequestInstance {
+export interface HookRequestInstance<ResponseData = any> {
   <T = any, R extends ResponseType = 'json'>(
     config: CustomAxiosRequestConfig
-  ): HookRequestInstanceResponseData<MappedType<R, T>>;
+  ): HookRequestInstanceResponseData<MappedType<R, T>, ResponseData>;
+
   cancelRequest: (requestId: string) => void;
   cancelAllRequest: () => void;
 }
@@ -45,13 +46,13 @@ export default function createHookRequest<ResponseData = any>(
 ) {
   const request = createFlatRequest<ResponseData>(axiosConfig, options);
 
-  const hookRequest: HookRequestInstance = function hookRequest<T = any, R extends ResponseType = 'json'>(
+  const hookRequest: HookRequestInstance<ResponseData> = function hookRequest<T = any, R extends ResponseType = 'json'>(
     config: CustomAxiosRequestConfig
   ) {
     const { loading, startLoading, endLoading } = useLoading();
 
-    const data = ref<MappedType<R, T> | null>(null);
-    const error = ref<AxiosError<MappedType<R, T>> | null>(null);
+    const data = ref<MappedType<R, T> | null>(null) as Ref<MappedType<R, T>>;
+    const error = ref<AxiosError<ResponseData> | null>(null) as Ref<AxiosError<ResponseData> | null>;
 
     startLoading();
 
@@ -70,7 +71,7 @@ export default function createHookRequest<ResponseData = any>(
       data,
       error
     };
-  } as HookRequestInstance;
+  } as HookRequestInstance<ResponseData>;
 
   hookRequest.cancelRequest = request.cancelRequest;
   hookRequest.cancelAllRequest = request.cancelAllRequest;
