@@ -60,13 +60,13 @@ function createDefaultModel(): Model {
 
 type RuleKey = Extract<keyof Model, 'nameSpace' | 'key' | 'value'>;
 
-const rules = computed<Record<RuleKey, App.Global.FormRule>>(() => {
-  const { patternRules } = useCocoFormRules(); // inside computed to make locale reactive
+const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
+  const { formRules } = useCocoFormRules(); // inside computed to make locale reactive
 
   return {
-    nameSpace: patternRules.nameSpace,
-    key: patternRules.key,
-    value: patternRules.value
+    nameSpace: formRules.nameSpace,
+    key: formRules.key,
+    value: formRules.value
   };
 });
 

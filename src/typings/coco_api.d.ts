@@ -11,8 +11,8 @@ declare namespace CocoApi {
       value: string;
       keyType: string;
       desc: string;
-      createTime: number | 0;
-      updateTime: number | 0;
+      createTime: string;
+      updateTime: string;
     }>;
 
     /** CocoConfig search params */

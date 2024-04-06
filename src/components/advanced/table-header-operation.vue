@@ -7,6 +7,7 @@ interface Props {
   itemAlign?: NaiveUI.Align;
   disabledDelete?: boolean;
   loading?: boolean;
+  needRefresh?: boolean;
 }
 
 defineProps<Props>();
@@ -21,9 +22,9 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const columns = defineModel<NaiveUI.TableColumnCheck[]>('columns', {
-  default: () => []
-});
+// const columns = defineModel<NaiveUI.TableColumnCheck[]>('columns', {
+//   default: () => []
+// });
 
 function add() {
   emit('add');
@@ -60,7 +61,7 @@ function refresh() {
         {{ $t('common.confirmDelete') }}
       </NPopconfirm>
     </slot>
-    <NButton size="small" @click="refresh">
+    <NButton v-if="needRefresh" size="small" @click="refresh">
       <template #icon>
         <icon-mdi-refresh class="text-icon" :class="{ 'animate-spin': loading }" />
       </template>

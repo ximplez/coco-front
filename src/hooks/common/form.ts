@@ -83,35 +83,29 @@ export function useCocoFormRules() {
   /** the default required rule */
   const defaultRequiredRule = createRequiredRule($t('form.required'));
   const patternRules = {
-    nameSpace: {
-      type: 'regexp',
-      pattern: /^[\u4E00-\u9FA5a-zA-Z0-9_-]{1,50}$/,
+    key: {
+      key: 'pattern',
+      // pattern: /^[^%&',;=?$\x22]{1,50}$/,
       min: 1,
-      message: 'nameSpace 格式不正确',
+      max: 50,
       trigger: ['input', 'blur', 'change']
     },
-    key: {
-      type: 'regexp',
-      pattern: /^[\u4E00-\u9FA5a-zA-Z0-9_-]{1,50}$/,
-      message: 'key 格式不正确',
-      trigger: 'change'
-    },
     value: {
-      type: 'regexp',
-      pattern: /^[\u4E00-\u9FA5a-zA-Z0-9_-]{1,50}$/,
-      message: 'value 格式不正确',
-      trigger: 'change'
+      key: 'pattern',
+      // pattern: /^[^%&',;=?$\x22]{1,50}$/,
+      trigger: ['input', 'blur', 'change']
     }
   } satisfies Record<string, App.Global.FormRule>;
 
   const formRules = {
-    nameSpace: [createRequiredRule('nameSpace 不可为空'), patternRules.nameSpace],
+    nameSpace: [createRequiredRule('请先切换到对应命名空间!')],
     key: [createRequiredRule('key 不可为空'), patternRules.key],
-    value: [createRequiredRule('value 不可为空'), patternRules.value]
+    value: [patternRules.value]
   } satisfies Record<string, App.Global.FormRule[]>;
 
   function createRequiredRule(message: string): App.Global.FormRule {
     return {
+      key: 'required',
       required: true,
       message,
       trigger: ['input', 'blur', 'change']

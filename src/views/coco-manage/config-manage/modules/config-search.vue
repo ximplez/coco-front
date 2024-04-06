@@ -23,21 +23,21 @@ const model = defineModel<CocoApi.CocoConfig.CocoConfigSearchParams>('model', {
   required: true
 });
 
-type RuleKey = Extract<keyof CocoApi.CocoConfig.CocoConfigSearchParams, 'nameSpace' | 'key'>;
+type RuleKey = Extract<keyof CocoApi.CocoConfig.CocoConfigSearchParams, 'nameSpace'>;
 
-const rules = computed<Record<RuleKey, App.Global.FormRule>>(() => {
-  const { patternRules } = useCocoFormRules(); // inside computed to make locale reactive
+const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
+  const { formRules } = useCocoFormRules(); // inside computed to make locale reactive
 
   return {
-    nameSpace: patternRules.nameSpace,
-    key: patternRules.key
+    nameSpace: formRules.nameSpace
   };
 });
 
 const { bool: nsLoading, setTrue: nsLoadingStart, setFalse: nsLoadingEnd } = useBoolean(false);
 const namespaces = shallowRef<string[]>([]);
+const namespacesQuery = shallowRef<string>('');
 
-async function getNamespaces() {
+async function refreshNamespaces() {
   const { error, data } = await fetchAllNamespace();
 
   if (!error) {
@@ -46,7 +46,13 @@ async function getNamespaces() {
 }
 
 const namespaceSelectOptions = computed(() => {
-  const opts: CommonType.Option[] = namespaces.value.map(page => ({
+  let namespaceSelect;
+  if (!namespacesQuery.value) {
+    namespaceSelect = namespaces.value.filter(item => ~item.indexOf(namespacesQuery.value));
+  } else {
+    namespaceSelect = namespaces.value;
+  }
+  const opts: CommonType.Option[] = namespaceSelect.map(page => ({
     label: page,
     value: page
   }));
@@ -57,11 +63,9 @@ const namespaceSelectOptions = computed(() => {
 async function handleSelectNameSpace(query: string) {
   nsLoadingStart();
   if (!query.length) {
-    await getNamespaces();
-    nsLoadingEnd();
-    return;
+    await refreshNamespaces();
   }
-  namespaces.value = namespaces.value.filter(item => ~item.indexOf(query));
+  namespacesQuery.value = query;
   nsLoadingEnd();
 }
 
@@ -77,8 +81,6 @@ async function updateShow(show: boolean) {
 // }
 
 async function search() {
-  window.$message?.success($t('common.updateSuccess'));
-  console.log(formRef.value);
   await validate();
   emit('search');
 }
@@ -93,7 +95,6 @@ async function search() {
             v-model:value="model.nameSpace"
             :options="namespaceSelectOptions"
             :loading="nsLoading"
-            remote
             filterable
             :on-update-show="updateShow"
             :on-update-value="handleSelectNameSpace"
