@@ -83,6 +83,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
+            type=latest
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -96,43 +97,43 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             - BUILD_ENV=${{ env.BUILD_ENV }}
-#
-#  deploy:
-#    needs: build
-#
-#    # 运行环境
-#    runs-on: ubuntu-latest
-#    permissions:
-#      contents: read
-#      packages: write
-#
-#    # 运行步骤
-#    steps:
-#      - uses: actions/checkout@v2
-#      # 部署服务器
-#      - name: deploy
-#        uses: appleboy/ssh-action@master
-#        # 传递给脚本的环境变量，不能用secrets
-#        env:
-#          IMAGE_NAME: ${{ needs.build.outputs.image-tag }}
-#          BUILD_ENV: ${{ env.BUILD_ENV }}
-#          DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
-#          DOCKER_PASSWORD_PATH: ${{ vars.DOCKER_PASSWORD_PATH }}
-#          DOCKER_RUN_ARGS: ${{ vars.DOCKER_RUN_ARGS }}
-#        with:
-#          host: ${{ vars.HOST }}
-#          port: ${{ secrets.PORT }}
-#          username: ${{ secrets.HOST_USERNAME }}
-#          envs: IMAGE_NAME,BUILD_ENV,DOCKER_USERNAME,DOCKER_PASSWORD_PATH,DOCKER_RUN_ARGS
-#          key: ${{ secrets.HOST_SSHKEY }}
-#          script: |
-#            echo "i=$IMAGE_NAME e=$BUILD_ENV u=$DOCKER_USERNAME p=DOCKER_PASSWORD_PATH s=$DOCKER_RUN_ARGS"
-#            if [[ -e "${{ github.repository_owner }}_docker_run.sh" ]] ;then
-#              echo "执行脚本已存在"
-#            else
-#              echo "执行脚本不存在，开始写入..."
-#              echo `apt install wget`
-#              echo `wget -O ${{ github.repository_owner }}_docker_run.sh ${{ vars.DEPLOY_SCRIPT }}`
-#            fi
-#            echo `sh ./${{ github.repository_owner }}_docker_run.sh -i $IMAGE_NAME -e $BUILD_ENV -u $DOCKER_USERNAME -p $DOCKER_PASSWORD_PATH -s $DOCKER_RUN_ARGS`
+
+  deploy:
+    needs: docker-release
+
+    # 运行环境
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    # 运行步骤
+    steps:
+      - uses: actions/checkout@v2
+      # 部署服务器
+      - name: deploy
+        uses: appleboy/ssh-action@master
+        # 传递给脚本的环境变量，不能用secrets
+        env:
+          IMAGE_NAME: ${{ needs.docker-release.outputs.image.name }}
+          BUILD_ENV: ${{ env.BUILD_ENV }}
+          DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+          DOCKER_PASSWORD_PATH: ${{ vars.DOCKER_PASSWORD_PATH }}
+          DOCKER_RUN_ARGS: ${{ vars.DOCKER_RUN_ARGS }}
+        with:
+          host: ${{ vars.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.HOST_USERNAME }}
+          envs: IMAGE_NAME,BUILD_ENV,DOCKER_USERNAME,DOCKER_PASSWORD_PATH,DOCKER_RUN_ARGS
+          key: ${{ secrets.HOST_SSHKEY }}
+          script: |
+            echo "i=$IMAGE_NAME e=$BUILD_ENV u=$DOCKER_USERNAME p=DOCKER_PASSWORD_PATH s=$DOCKER_RUN_ARGS"
+            if [[ -e "${{ github.repository_owner }}_docker_run.sh" ]] ;then
+              echo "执行脚本已存在"
+            else
+              echo "执行脚本不存在，开始写入..."
+              echo `apt install wget`
+              echo `wget -O ${{ github.repository_owner }}_docker_run.sh ${{ vars.DEPLOY_SCRIPT }}`
+            fi
+            echo `sh ./${{ github.repository_owner }}_docker_run.sh -i $IMAGE_NAME -e $BUILD_ENV -u $DOCKER_USERNAME -p $DOCKER_PASSWORD_PATH -s $DOCKER_RUN_ARGS`
 #
