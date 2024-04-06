@@ -23,13 +23,13 @@ const model = defineModel<CocoApi.CocoConfig.CocoConfigSearchParams>('model', {
   required: true
 });
 
-type RuleKey = Extract<keyof CocoApi.CocoConfig.CocoConfigSearchParams, 'nameSpace'>;
+type RuleKey = Extract<keyof CocoApi.CocoConfig.CocoConfigSearchParams, 'namespace'>;
 
 const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
   const { formRules } = useCocoFormRules(); // inside computed to make locale reactive
 
   return {
-    nameSpace: formRules.nameSpace
+    namespace: formRules.namespace
   };
 });
 
@@ -98,9 +98,9 @@ async function search() {
   <NCard :title="$t('common.search')" :bordered="false" size="small" class="card-wrapper">
     <NForm ref="formRef" :model="model" :rules="rules" label-placement="left" :label-width="80">
       <NGrid responsive="screen" item-responsive>
-        <NFormItemGi span="24 s:12 m:6" label="命名空间" path="nameSpace">
+        <NFormItemGi span="24 s:12 m:6" label="命名空间" path="namespace">
           <NSelect
-            v-model:value="model.nameSpace"
+            v-model:value="model.namespace"
             :options="namespaceSelectOptions"
             :loading="nsLoading"
             filterable
@@ -114,7 +114,7 @@ async function search() {
             v-model:value="model.key"
             placeholder="配置键"
             clearable
-            :disabled="!model.nameSpace"
+            :disabled="!model.namespace"
             :allow-input="(value: string) => !value.startsWith(' ') && !value.endsWith(' ')"
             :on-keydown="
               (e: KeyboardEvent) => {
@@ -131,7 +131,7 @@ async function search() {
             :options="categorySelectOptions"
             :loading="ctLoading"
             filterable
-            :disabled="!model.nameSpace"
+            :disabled="!model.namespace"
             :on-update-show="updateCategoryShow"
             :on-update-value="search"
             :on-search="handleSelectCategory"

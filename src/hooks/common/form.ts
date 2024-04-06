@@ -98,7 +98,7 @@ export function useCocoFormRules() {
   } satisfies Record<string, App.Global.FormRule>;
 
   const formRules = {
-    nameSpace: [createRequiredRule('请先切换到对应命名空间!')],
+    namespace: [createRequiredRule('请先切换到对应命名空间!')],
     key: [createRequiredRule('key 不可为空'), patternRules.key],
     value: [patternRules.value]
   } satisfies Record<string, App.Global.FormRule[]>;

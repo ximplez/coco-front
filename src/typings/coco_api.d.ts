@@ -5,7 +5,7 @@ declare namespace CocoApi {
     /** user */
     type CocoConfig = Api.Common.CommonRecord<{
       id: string;
-      nameSpace: string;
+      namespace: string;
       category: string;
       key: string;
       value: string;
@@ -17,7 +17,7 @@ declare namespace CocoApi {
 
     /** CocoConfig search params */
     type CocoConfigSearchParams = CommonType.RecordNullable<
-      Pick<CocoConfig, 'nameSpace' | 'category' | 'key'> & CommonSearchParams
+      Pick<CocoConfig, 'namespace' | 'category' | 'key'> & CommonSearchParams
     >;
 
     /** CocoConfig list */

@@ -43,13 +43,13 @@ const keyEditable = computed(() => {
   return titles[props.operateType];
 });
 
-type Model = Pick<CocoApi.CocoConfig.CocoConfig, 'nameSpace' | 'category' | 'key' | 'value' | 'keyType' | 'desc'>;
+type Model = Pick<CocoApi.CocoConfig.CocoConfig, 'namespace' | 'category' | 'key' | 'value' | 'keyType' | 'desc'>;
 
 const model: Model = reactive(createDefaultModel());
 
 function createDefaultModel(): Model {
   return {
-    nameSpace: props.rowData?.nameSpace || '',
+    namespace: props.rowData?.namespace || '',
     category: '',
     key: '',
     value: '',
@@ -58,13 +58,13 @@ function createDefaultModel(): Model {
   };
 }
 
-type RuleKey = Extract<keyof Model, 'nameSpace' | 'key' | 'value'>;
+type RuleKey = Extract<keyof Model, 'namespace' | 'key' | 'value'>;
 
 const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
   const { formRules } = useCocoFormRules(); // inside computed to make locale reactive
 
   return {
-    nameSpace: formRules.nameSpace,
+    namespace: formRules.namespace,
     key: formRules.key,
     value: formRules.value
   };
@@ -73,7 +73,7 @@ const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
 function handleUpdateModelWhenEdit() {
   if (props.operateType === 'add') {
     Object.assign(model, createDefaultModel());
-    model.nameSpace = props.rowData?.nameSpace || '';
+    model.namespace = props.rowData?.namespace || '';
     return;
   }
 
@@ -107,8 +107,8 @@ watch(visible, () => {
   <NDrawer v-model:show="visible" :title="title" display-directive="show" :width="360">
     <NDrawerContent :title="title" :native-scrollbar="false" closable>
       <NForm ref="formRef" :model="model" :rules="rules">
-        <NFormItem label="命名空间" path="nameSpace" required>
-          <NInput v-model:value="model.nameSpace" disabled />
+        <NFormItem label="命名空间" path="namespace" required>
+          <NInput v-model:value="model.namespace" disabled />
         </NFormItem>
         <NFormItem label="配置键" path="key" required>
           <NInput v-model:value="model.key" :disabled="!keyEditable" />

@@ -15,7 +15,7 @@ const { columns, columnChecks, data, getData, loading, mobilePagination, searchP
   apiParams: {
     current: 1,
     size: 10,
-    nameSpace: null,
+    namespace: null,
     key: null,
     category: null
   },
