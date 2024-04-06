@@ -1,5 +1,5 @@
-import { ref, toValue } from 'vue';
 import type { ComputedRef, Ref } from 'vue';
+import { ref, toValue } from 'vue';
 import type { FormInst } from 'naive-ui';
 import { REG_CODE_SIX, REG_EMAIL, REG_PHONE, REG_PWD, REG_USER_NAME } from '@/constants/reg';
 import { $t } from '@/locales';
@@ -47,7 +47,8 @@ export function useFormRules() {
   function createRequiredRule(message: string): App.Global.FormRule {
     return {
       required: true,
-      message
+      message,
+      trigger: ['input', 'blur']
     };
   }
 
@@ -75,6 +76,52 @@ export function useFormRules() {
     defaultRequiredRule,
     createRequiredRule,
     createConfirmPwdRule
+  };
+}
+
+export function useCocoFormRules() {
+  /** the default required rule */
+  const defaultRequiredRule = createRequiredRule($t('form.required'));
+  const patternRules = {
+    nameSpace: {
+      type: 'regexp',
+      pattern: /^[\u4E00-\u9FA5a-zA-Z0-9_-]{1,50}$/,
+      min: 1,
+      message: 'nameSpace 格式不正确',
+      trigger: ['input', 'blur', 'change']
+    },
+    key: {
+      type: 'regexp',
+      pattern: /^[\u4E00-\u9FA5a-zA-Z0-9_-]{1,50}$/,
+      message: 'key 格式不正确',
+      trigger: 'change'
+    },
+    value: {
+      type: 'regexp',
+      pattern: /^[\u4E00-\u9FA5a-zA-Z0-9_-]{1,50}$/,
+      message: 'value 格式不正确',
+      trigger: 'change'
+    }
+  } satisfies Record<string, App.Global.FormRule>;
+
+  const formRules = {
+    nameSpace: [createRequiredRule('nameSpace 不可为空'), patternRules.nameSpace],
+    key: [createRequiredRule('key 不可为空'), patternRules.key],
+    value: [createRequiredRule('value 不可为空'), patternRules.value]
+  } satisfies Record<string, App.Global.FormRule[]>;
+
+  function createRequiredRule(message: string): App.Global.FormRule {
+    return {
+      required: true,
+      message,
+      trigger: ['input', 'blur', 'change']
+    };
+  }
+
+  return {
+    patternRules,
+    formRules,
+    defaultRequiredRule
   };
 }
 

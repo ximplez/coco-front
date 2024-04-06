@@ -13,7 +13,9 @@ defineProps<Props>();
 
 interface Emits {
   (e: 'add'): void;
+
   (e: 'delete'): void;
+
   (e: 'refresh'): void;
 }
 
@@ -64,7 +66,6 @@ function refresh() {
       </template>
       {{ $t('common.refresh') }}
     </NButton>
-    <TableColumnSetting v-model:columns="columns" />
     <slot name="suffix"></slot>
   </NSpace>
 </template>

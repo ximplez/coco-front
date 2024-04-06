@@ -164,7 +164,9 @@ const local: App.I18n.Schema = {
     exception: '异常页',
     exception_403: '403',
     exception_404: '404',
-    exception_500: '500'
+    exception_500: '500',
+    'coco-manage': 'coco管理',
+    'coco-manage_config-manage': '配置管理'
   },
   page: {
     login: {
@@ -194,7 +196,7 @@ const local: App.I18n.Schema = {
         user: '普通用户'
       },
       ssoLogin: {
-        title: 'SSO登录',
+        title: 'SSO登录'
       },
       codeLogin: {
         title: '验证码登录',

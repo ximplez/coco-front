@@ -164,7 +164,9 @@ const local: App.I18n.Schema = {
     exception: 'Exception',
     exception_403: '403',
     exception_404: '404',
-    exception_500: '500'
+    exception_500: '500',
+    'coco-manage': 'coco manage',
+    'coco-manage_config-manage': 'config manage'
   },
   page: {
     login: {
@@ -194,7 +196,7 @@ const local: App.I18n.Schema = {
         user: 'User'
       },
       ssoLogin: {
-        title: 'SSO Login',
+        title: 'SSO Login'
       },
       codeLogin: {
         title: 'Verification Code Login',

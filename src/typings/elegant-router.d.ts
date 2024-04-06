@@ -25,6 +25,8 @@ declare module "@elegant-router/types" {
     "404": "/404";
     "500": "/500";
     about: "/about";
+    "coco-manage": "/coco-manage";
+    "coco-manage_config-manage": "/coco-manage/config-manage";
     function: "/function";
     "function_hide-child": "/function/hide-child";
     "function_hide-child_one": "/function/hide-child/one";
@@ -88,6 +90,7 @@ declare module "@elegant-router/types" {
     | "404"
     | "500"
     | "about"
+    | "coco-manage"
     | "function"
     | "home"
     | "login"
@@ -114,6 +117,7 @@ declare module "@elegant-router/types" {
     | "500"
     | "login"
     | "about"
+    | "coco-manage_config-manage"
     | "function_hide-child_one"
     | "function_hide-child_three"
     | "function_hide-child_two"

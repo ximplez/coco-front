@@ -154,6 +154,8 @@ const routeMap: RouteMap = {
   "404": "/404",
   "500": "/500",
   about: "/about",
+  "coco-manage": "/coco-manage",
+  "coco-manage_config-manage": "/coco-manage/config-manage",
   function: "/function",
   "function_hide-child": "/function/hide-child",
   "function_hide-child_one": "/function/hide-child/one",
