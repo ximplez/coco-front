@@ -92,7 +92,7 @@ export function useCocoFormRules() {
     },
     value: {
       key: 'pattern',
-      // pattern: /^[^%&',;=?$\x22]{1,50}$/,
+      // pattern: /^[^%&',;=?$\x22]{1,500}$/,
       trigger: ['input', 'blur', 'change']
     }
   } satisfies Record<string, App.Global.FormRule>;
@@ -100,7 +100,7 @@ export function useCocoFormRules() {
   const formRules = {
     namespace: [createRequiredRule('请先切换到对应命名空间!')],
     key: [createRequiredRule('key 不可为空'), patternRules.key],
-    value: [patternRules.value]
+    value: [createRequiredRule('value 不可为空'), patternRules.value]
   } satisfies Record<string, App.Global.FormRule[]>;
 
   function createRequiredRule(message: string): App.Global.FormRule {

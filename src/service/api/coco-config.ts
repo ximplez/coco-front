@@ -22,3 +22,27 @@ export function fetchCocoConfig(params?: CocoApi.CocoConfig.CocoConfigSearchPara
     params
   });
 }
+
+export function newCocoConfig(params: CocoApi.CocoConfig.CocoConfig) {
+  return requestCoco<boolean>({
+    url: `/config/newConfig`,
+    method: 'post',
+    params
+  });
+}
+
+export function updateCocoConfig(params: CocoApi.CocoConfig.CocoConfig) {
+  return requestCoco<boolean>({
+    url: `/config/updateConfig`,
+    method: 'post',
+    params
+  });
+}
+
+export function deleteCocoConfig(params?: { ids?: (string | number)[]; categories?: string[] }) {
+  return requestCoco<boolean>({
+    url: `/config/deleteConfig`,
+    method: 'post',
+    params
+  });
+}

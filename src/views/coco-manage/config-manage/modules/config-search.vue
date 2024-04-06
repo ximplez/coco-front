@@ -64,7 +64,7 @@ const {
   selectOptions: categorySelectOptions
 } = useSelect<string>({
   apiFn: fetchAllCategory,
-  apiParams: { namespace: 'namespace' },
+  apiParams: { namespace: model.value.namespace },
   transformer: res => {
     const records = res.data || [];
     return {

@@ -3,7 +3,7 @@ import { NButton } from 'naive-ui';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { useTable, useTableOperate } from '@/hooks/common/table';
-import { fetchCocoConfig } from '@/service/api/coco-config';
+import { deleteCocoConfig, fetchCocoConfig } from '@/service/api/coco-config';
 import ConfigSearch from './modules/config-search.vue';
 import ConfigOperateDrawer from './modules/config-operate-drawer.vue';
 
@@ -120,15 +120,21 @@ const {
 
 async function handleBatchDelete() {
   // request
-  console.log(checkedRowKeys.value);
-
+  const res = await deleteCocoConfig({ ids: checkedRowKeys.value });
+  if (!res || !res.data) {
+    window.$message?.error('删除失败');
+    return;
+  }
   onBatchDeleted();
 }
 
-function handleDelete(id: number) {
+async function handleDelete(id: string | number) {
   // request
-  console.log(id);
-
+  const res = await deleteCocoConfig({ ids: [id] });
+  if (!res || !res.data) {
+    window.$message?.error('删除失败');
+    return;
+  }
   onDeleted();
 }
 
@@ -147,6 +153,7 @@ function edit(id: number) {
           :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
           :need-refresh="false"
+          :extra-data="{ namespace: searchParams.namespace }"
           @add="handleAdd"
           @delete="handleBatchDelete"
         />
@@ -168,7 +175,7 @@ function edit(id: number) {
       <ConfigOperateDrawer
         v-model:visible="drawerVisible"
         :operate-type="operateType"
-        :row-data="editingData"
+        :row-data="{ ...editingData, namespace: searchParams?.namespace }"
         @submitted="getData"
       />
     </NCard>

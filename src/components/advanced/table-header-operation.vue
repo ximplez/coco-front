@@ -8,6 +8,7 @@ interface Props {
   disabledDelete?: boolean;
   loading?: boolean;
   needRefresh?: boolean;
+  extraData?: Record<string, unknown>;
 }
 
 defineProps<Props>();
@@ -43,7 +44,7 @@ function refresh() {
   <NSpace :align="itemAlign" wrap justify="end" class="lt-sm:w-200px">
     <slot name="prefix"></slot>
     <slot name="default">
-      <NButton size="small" ghost type="primary" @click="add">
+      <NButton size="small" ghost type="primary" :disabled="!extraData?.namespace" @click="add">
         <template #icon>
           <icon-ic-round-plus class="text-icon" />
         </template>

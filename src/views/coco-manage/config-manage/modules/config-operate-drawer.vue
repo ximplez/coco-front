@@ -2,6 +2,8 @@
 import { computed, reactive, watch } from 'vue';
 import { useCocoFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
+import { useSelect } from '@/hooks/business/coco-config';
+import { fetchAllCategory, updateCocoConfig } from '@/service/api/coco-config';
 
 defineOptions({
   name: 'ConfigOperateDrawer'
@@ -82,17 +84,46 @@ function handleUpdateModelWhenEdit() {
   }
 }
 
+const {
+  handleSelectQuery: handleSelectCategory,
+  loading: ctLoading,
+  selectOptions: categorySelectOptions
+} = useSelect<string>({
+  apiFn: fetchAllCategory,
+  apiParams: { namespace: model.namespace },
+  transformer: res => {
+    const records = res.data || [];
+    return {
+      data: records,
+      pageNum: 0,
+      pageSize: 0,
+      total: 0
+    };
+  },
+  extractString: t => t
+});
+
+async function updateCategoryShow(show: boolean) {
+  if (show) {
+    await handleSelectCategory('');
+  }
+}
+
 function closeDrawer() {
   visible.value = false;
 }
 
 async function handleSubmit() {
-  console.log(model);
   await validate();
   // request
-  window.$message?.success($t('common.updateSuccess'));
-  closeDrawer();
-  emit('submitted');
+  const res = await updateCocoConfig(model as CocoApi.CocoConfig.CocoConfig);
+  if (res && res.data) {
+    window.$message?.success($t('common.updateSuccess'));
+    closeDrawer();
+    emit('submitted');
+    return;
+  }
+  window.$message?.error('更新失败');
 }
 
 watch(visible, () => {
@@ -113,10 +144,18 @@ watch(visible, () => {
         <NFormItem label="配置键" path="key" required>
           <NInput v-model:value="model.key" :disabled="!keyEditable" />
         </NFormItem>
-        <NFormItem label="配置目录" path="category" required>
-          <NInput v-model:value="model.category" />
+        <NFormItem label="配置目录" path="category">
+          <NSelect
+            v-model:value="model.category"
+            :options="categorySelectOptions"
+            :loading="ctLoading"
+            filterable
+            tag
+            :on-update-show="updateCategoryShow"
+            :on-search="handleSelectCategory"
+          />
         </NFormItem>
-        <NFormItem label="值类型" path="keyType" required>
+        <NFormItem label="值类型" path="keyType">
           <NInput v-model:value="model.keyType" />
         </NFormItem>
         <NFormItem label="配置值" path="value" required>
