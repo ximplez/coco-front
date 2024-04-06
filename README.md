@@ -7,6 +7,8 @@
 
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE) ![](https://img.shields.io/github/stars/soybeanjs/soybean-admin) ![](https://img.shields.io/github/forks/soybeanjs/soybean-admin)
 
+[![Release](https://github.com/ximplez/coco-front/actions/workflows/release.yml/badge.svg)](https://github.com/ximplez/coco-front/actions/workflows/release.yml)
+
 
 >[!CAUTION]
 > the old version of `Soybean Admin` is moved to branch [legacy](https://github.com/soybeanjs/soybean-admin/tree/legacy). It is recommended to use the latest version of `Soybean Admin`.
