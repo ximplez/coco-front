@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue';
+import { computed } from 'vue';
 import { $t } from '@/locales';
 import { useCocoFormRules, useNaiveForm } from '@/hooks/common/form';
-import { fetchAllNamespace } from '@/service/api/coco-config';
-import { useBoolean } from '~/packages/hooks';
+import { useSelect } from '@/hooks/business/coco-config';
+import { fetchAllCategory, fetchAllNamespace } from '@/service/api/coco-config';
 
 defineOptions({
   name: 'ConfigSearch'
@@ -33,45 +33,53 @@ const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
   };
 });
 
-const { bool: nsLoading, setTrue: nsLoadingStart, setFalse: nsLoadingEnd } = useBoolean(false);
-const namespaces = shallowRef<string[]>([]);
-const namespacesQuery = shallowRef<string>('');
-
-async function refreshNamespaces() {
-  const { error, data } = await fetchAllNamespace();
-
-  if (!error) {
-    namespaces.value = data || [];
-  }
-}
-
-const namespaceSelectOptions = computed(() => {
-  let namespaceSelect;
-  if (!namespacesQuery.value) {
-    namespaceSelect = namespaces.value.filter(item => ~item.indexOf(namespacesQuery.value));
-  } else {
-    namespaceSelect = namespaces.value;
-  }
-  const opts: CommonType.Option[] = namespaceSelect.map(page => ({
-    label: page,
-    value: page
-  }));
-
-  return opts;
+const {
+  handleSelectQuery: handleSelectNameSpace,
+  loading: nsLoading,
+  selectOptions: namespaceSelectOptions
+} = useSelect<string>({
+  apiFn: fetchAllNamespace,
+  apiParams: null,
+  transformer: res => {
+    const records = res.data || [];
+    return {
+      data: records,
+      pageNum: 0,
+      pageSize: 0,
+      total: 0
+    };
+  },
+  extractString: t => t
 });
 
-async function handleSelectNameSpace(query: string) {
-  nsLoadingStart();
-  if (!query.length) {
-    await refreshNamespaces();
-  }
-  namespacesQuery.value = query;
-  nsLoadingEnd();
-}
-
-async function updateShow(show: boolean) {
+async function updateNameSpaceShow(show: boolean) {
   if (show) {
     await handleSelectNameSpace('');
+  }
+}
+
+const {
+  handleSelectQuery: handleSelectCategory,
+  loading: ctLoading,
+  selectOptions: categorySelectOptions
+} = useSelect<string>({
+  apiFn: fetchAllCategory,
+  apiParams: { namespace: 'namespace' },
+  transformer: res => {
+    const records = res.data || [];
+    return {
+      data: records,
+      pageNum: 0,
+      pageSize: 0,
+      total: 0
+    };
+  },
+  extractString: t => t
+});
+
+async function updateCategoryShow(show: boolean) {
+  if (show) {
+    await handleSelectCategory('');
   }
 }
 
@@ -96,16 +104,38 @@ async function search() {
             :options="namespaceSelectOptions"
             :loading="nsLoading"
             filterable
-            :on-update-show="updateShow"
-            :on-update-value="handleSelectNameSpace"
-            @search="handleSelectNameSpace"
+            :on-update-show="updateNameSpaceShow"
+            :on-update-value="search"
+            :on-search="handleSelectNameSpace"
           />
         </NFormItemGi>
         <NFormItemGi span="24 s:12 m:10" label="配置键" path="key">
-          <NInput v-model:value="model.key" placeholder="配置键" />
+          <NInput
+            v-model:value="model.key"
+            placeholder="配置键"
+            clearable
+            :disabled="!model.nameSpace"
+            :allow-input="(value: string) => !value.startsWith(' ') && !value.endsWith(' ')"
+            :on-keydown="
+              (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                  search();
+                }
+              }
+            "
+          />
         </NFormItemGi>
-        <NFormItemGi span="24 s:12 m:6" label="配置目录" path="userPhone" class="pr-24px">
-          <NInput v-model:value="model.category" placeholder="配置目录" />
+        <NFormItemGi span="24 s:12 m:6" label="配置目录" path="category">
+          <NSelect
+            v-model:value="model.category"
+            :options="categorySelectOptions"
+            :loading="ctLoading"
+            filterable
+            :disabled="!model.nameSpace"
+            :on-update-show="updateCategoryShow"
+            :on-update-value="search"
+            :on-search="handleSelectCategory"
+          />
         </NFormItemGi>
         <NFormItemGi span="24 m:12 m:2">
           <NSpace class="w-full" justify="end">
