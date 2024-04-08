@@ -3,7 +3,7 @@ import { computed, reactive, watch } from 'vue';
 import { useCocoFormRules, useNaiveForm } from '@/hooks/common/form';
 import { $t } from '@/locales';
 import { useSelect } from '@/hooks/business/coco-config';
-import { fetchAllCategory, updateCocoConfig } from '@/service/api/coco-config';
+import { fetchAllCategory, newCocoConfig, updateCocoConfig } from '@/service/api/coco-config';
 
 defineOptions({
   name: 'ConfigOperateDrawer'
@@ -72,7 +72,10 @@ const rules = computed<Record<RuleKey, App.Global.FormRule[]>>(() => {
   };
 });
 
+const categoryApiParams = reactive({ namespace: props.rowData?.namespace });
+
 function handleUpdateModelWhenEdit() {
+  categoryApiParams.namespace = props.rowData?.namespace || '';
   if (props.operateType === 'add') {
     Object.assign(model, createDefaultModel());
     model.namespace = props.rowData?.namespace || '';
@@ -90,7 +93,7 @@ const {
   selectOptions: categorySelectOptions
 } = useSelect<string>({
   apiFn: fetchAllCategory,
-  apiParams: { namespace: model.namespace },
+  apiParams: categoryApiParams,
   transformer: res => {
     const records = res.data || [];
     return {
@@ -116,14 +119,26 @@ function closeDrawer() {
 async function handleSubmit() {
   await validate();
   // request
-  const res = await updateCocoConfig(model as CocoApi.CocoConfig.CocoConfig);
-  if (res && res.data) {
-    window.$message?.success($t('common.updateSuccess'));
-    closeDrawer();
-    emit('submitted');
-    return;
+  if (props.operateType === 'add') {
+    const res = await newCocoConfig(model as CocoApi.CocoConfig.CocoConfig);
+    if (res && res.data) {
+      window.$message?.success($t('common.addSuccess'));
+      closeDrawer();
+      emit('submitted');
+      return;
+    }
+    window.$message?.error('添加失败');
   }
-  window.$message?.error('更新失败');
+  if (props.operateType === 'edit') {
+    const res = await updateCocoConfig(model as CocoApi.CocoConfig.CocoConfig);
+    if (res && res.data) {
+      window.$message?.success($t('common.updateSuccess'));
+      closeDrawer();
+      emit('submitted');
+      return;
+    }
+    window.$message?.error('更新失败');
+  }
 }
 
 watch(visible, () => {

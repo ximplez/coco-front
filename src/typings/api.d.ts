@@ -5,7 +5,7 @@
  */
 declare namespace Api {
   namespace ErrorCode {
-    type Code = '1' | '2';
+    type Code = '1' | '1005' | '1006';
   }
   namespace Common {
     /** common params of paginating */

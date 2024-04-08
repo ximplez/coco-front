@@ -7,11 +7,11 @@ export function fetchAllNamespace() {
   });
 }
 
-export function fetchAllCategory(namespace: string) {
+export function fetchAllCategory(params: { namespace: string }) {
   return requestCoco<string[]>({
     url: `/meta/getAllCategoryByNamespace`,
     method: 'get',
-    params: namespace
+    params
   });
 }
 
@@ -27,7 +27,7 @@ export function newCocoConfig(params: CocoApi.CocoConfig.CocoConfig) {
   return requestCoco<boolean>({
     url: `/config/newConfig`,
     method: 'post',
-    params
+    data: params
   });
 }
 
@@ -35,7 +35,7 @@ export function updateCocoConfig(params: CocoApi.CocoConfig.CocoConfig) {
   return requestCoco<boolean>({
     url: `/config/updateConfig`,
     method: 'post',
-    params
+    data: params
   });
 }
 
@@ -43,6 +43,6 @@ export function deleteCocoConfig(params?: { ids?: (string | number)[]; categorie
   return requestCoco<boolean>({
     url: `/config/deleteConfig`,
     method: 'post',
-    params
+    data: params
   });
 }

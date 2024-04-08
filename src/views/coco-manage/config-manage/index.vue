@@ -153,7 +153,7 @@ function edit(id: number) {
           :disabled-delete="checkedRowKeys.length === 0"
           :loading="loading"
           :need-refresh="false"
-          :extra-data="{ namespace: searchParams.namespace }"
+          :extra-data="{ namespace: searchParams?.namespace || '' }"
           @add="handleAdd"
           @delete="handleBatchDelete"
         />

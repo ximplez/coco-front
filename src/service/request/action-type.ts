@@ -1,7 +1,8 @@
-import type {ErrorCodeHandle} from '~/packages/axios';
-import {actionIdempotent} from '@/service/request/action';
+import type { ErrorCodeHandle } from '~/packages/axios';
+import { actionAuthenticationFail, actionIdempotent } from '@/service/request/action';
 
 export const codeActions: Map<Api.ErrorCode.Code, ErrorCodeHandle> = new Map([
   ['1', actionIdempotent],
-  ['2', actionIdempotent]
+  ['1005', actionAuthenticationFail],
+  ['1006', actionAuthenticationFail]
 ]);

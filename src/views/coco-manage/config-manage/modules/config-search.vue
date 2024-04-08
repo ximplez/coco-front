@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import { $t } from '@/locales';
 import { useCocoFormRules, useNaiveForm } from '@/hooks/common/form';
 import { useSelect } from '@/hooks/business/coco-config';
@@ -58,13 +58,21 @@ async function updateNameSpaceShow(show: boolean) {
   }
 }
 
+const categoryApiParams = reactive({ namespace: model.value.namespace });
+
+async function handleNamespaceUpdate(value: string, _) {
+  categoryApiParams.namespace = value;
+  model.value.namespace = value;
+  await search();
+}
+
 const {
   handleSelectQuery: handleSelectCategory,
   loading: ctLoading,
   selectOptions: categorySelectOptions
 } = useSelect<string>({
   apiFn: fetchAllCategory,
-  apiParams: { namespace: model.value.namespace },
+  apiParams: categoryApiParams,
   transformer: res => {
     const records = res.data || [];
     return {
@@ -105,7 +113,7 @@ async function search() {
             :loading="nsLoading"
             filterable
             :on-update-show="updateNameSpaceShow"
-            :on-update-value="search"
+            :on-update-value="handleNamespaceUpdate"
             :on-search="handleSelectNameSpace"
           />
         </NFormItemGi>

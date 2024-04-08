@@ -1,14 +1,14 @@
-import type {AxiosResponse} from 'axios';
-import {BACKEND_ERROR_CODE, createFlatRequest, createRequest} from '@sa/axios';
-import {useAuthStore} from '@/store/modules/auth';
-import {localStg} from '@/utils/storage';
-import {getServiceBaseURL} from '@/utils/service';
-import {$t} from '@/locales';
-import {codeActions} from '@/service/request/action-type';
-import {handleRefreshToken} from './shared';
+import type { AxiosResponse } from 'axios';
+import { BACKEND_ERROR_CODE, createFlatRequest, createRequest } from '@sa/axios';
+import { useAuthStore } from '@/store/modules/auth';
+import { localStg } from '@/utils/storage';
+import { getServiceBaseURL } from '@/utils/service';
+import { $t } from '@/locales';
+import { codeActions } from '@/service/request/action-type';
+import { handleRefreshToken } from './shared';
 
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y';
-const {baseURL, otherBaseURL} = getServiceBaseURL(import.meta.env, isHttpProxy);
+const { baseURL, otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy);
 
 interface InstanceState {
   /** whether the request is refreshing token */
@@ -24,12 +24,12 @@ export const request = createFlatRequest<App.Service.Response, InstanceState>(
   },
   {
     async onRequest(config) {
-      const {headers} = config;
+      const { headers } = config;
 
       // set token
       const token = localStg.get('token');
       const Authorization = token ? `Bearer ${token}` : null;
-      Object.assign(headers, {Authorization});
+      Object.assign(headers, { Authorization });
 
       return config;
     },
@@ -134,12 +134,12 @@ export const demoRequest = createRequest<App.Service.DemoResponse>(
   },
   {
     async onRequest(config) {
-      const {headers} = config;
+      const { headers } = config;
 
       // set token
       const token = localStg.get('token');
       const Authorization = token ? `Bearer ${token}` : null;
-      Object.assign(headers, {Authorization});
+      Object.assign(headers, { Authorization });
 
       return config;
     },

@@ -108,7 +108,7 @@ export function useCocoFormRules() {
       key: 'required',
       required: true,
       message,
-      trigger: ['input', 'blur', 'change']
+      trigger: ['change']
     };
   }
 
