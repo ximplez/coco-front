@@ -4,7 +4,7 @@ FROM node:20-alpine3.17 as build
 WORKDIR /app
 COPY . /app
 
-RUN npm install -g pnpm \
+RUN npm install -g pnpm@8.15.5 \
     && pnpm install \
     && pnpm run build
 
