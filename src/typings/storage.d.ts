@@ -12,6 +12,8 @@ declare namespace StorageType {
   interface Local {
     /** The i18n language */
     lang: App.I18n.LangType;
+    /** The Request-id. Before login no change */
+    rid: string;
     author: string;
     /** The token */
     token: string;

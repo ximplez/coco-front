@@ -25,6 +25,7 @@ export function getUserInfo() {
 
 /** Clear auth storage */
 export function clearAuthStorage() {
+  localStg.remove('rid');
   localStg.remove('token');
   localStg.remove('refreshToken');
   localStg.remove('userInfo');
