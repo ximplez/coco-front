@@ -125,5 +125,6 @@ jobs:
       - name: deploy
         uses: ximplez/ssh-deploy@main
         env:
-          CONFIG_PATH: deploy/deploy_config.json
+          DEPLOY_CONFIG_PATH: deploy/deploy_config.json
+          SSH_CMD_CONFIG_PATH: deploy/ssh_cmd.json
 #
