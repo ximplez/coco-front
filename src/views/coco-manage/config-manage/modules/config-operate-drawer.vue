@@ -174,10 +174,27 @@ watch(visible, () => {
           <NInput v-model:value="model.keyType" />
         </NFormItem>
         <NFormItem label="配置值" path="value" required>
-          <NInput v-model:value="model.value" />
+          <NInput
+            v-model:value="model.value"
+            type="textarea"
+            size="small"
+            :autosize="{
+              minRows: 3,
+              maxRows: 5
+            }"
+          />
         </NFormItem>
         <NFormItem label="描述" path="desc">
-          <NInput v-model:value="model.desc" placeholder="描述配置的用途" />
+          <NInput
+            v-model:value="model.desc"
+            placeholder="描述配置的用途"
+            type="textarea"
+            size="small"
+            :autosize="{
+              minRows: 3,
+              maxRows: 5
+            }"
+          />
         </NFormItem>
       </NForm>
       <template #footer>
